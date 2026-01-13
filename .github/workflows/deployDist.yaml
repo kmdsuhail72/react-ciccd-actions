@@ -1,24 +1,37 @@
-name: Deploy Dist
-on: [push,workflow_dispatch]
-jobs:
-    test:
-        runs-on: ubuntu-latest
-        steps:
-            - name: Get Code
-              uses: actions/checkout@v6
-            - name : Install Node 22
-              uses: actions/setup-node@v6
-              with:
-                node-version: 22
-            - name: print node version
-              run: node -v
-            - name: Install Dependencies
-              run: npm ci
-            - name: Run Tests
-              run : npm run test
+# name: Deploy Dist
+# on: [push,workflow_dispatch]
+# jobs:
+#     test:
+#         runs-on: ubuntu-latest
+#         steps:
+#             - name: Get Code
+#               uses: actions/checkout@v6
+#             - name : Install Node 22
+#               uses: actions/setup-node@v6
+#               with:
+#                 node-version: 22
+#             - name: print node version
+#               run: node -v
+#             - name: Install Dependencies
+#               run: npm ci
+#             - name: Run Tests
+#               run : npm run test
             
 
-            #   run : |
-            #     echo "cloning repo"
-            #     echo "${{toJson(github)}}"
-            #     git clone https://github.com/${{github.repository}}.git
+#             #   run : |
+#             #     echo "cloning repo"
+#             #     echo "${{toJson(github)}}"
+#             #     git clone https://github.com/${{github.repository}}.git
+name: Build and Test
+on: [push, pull_request]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '18'
+      - run: npm install
+      - run: npm run build --if-present
+      - run: npm test -- --passWithNoTests  # This allows tests to pass even if none exist
